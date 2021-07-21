@@ -31,13 +31,18 @@
           </CCardBody>
         </CCard>
       </CCol>
-      <CCol md="8" class="bg-info py-3">
+      <CCol md="8" class="bg-info py-3" 
+          @drop.stop.prevent="dropInputTag" 
+          @dragover.prevent>
         <chat ref="chat"
                     @sendmessage="sendMessage"
                     style="max-width:100%;"
                     :messages-placeholder="'... Type your message ...'"
                     :user-name="'MyName'">
         </chat>
+        <CElementCover :opacity="0.8" v-if="dragIn">
+          <h1 class="d-inline" style="color:green">파일을 추가하시겠습니까? </h1>
+        </CElementCover>
       </CCol>
     </CRow>
   </CContainer>
@@ -57,7 +62,7 @@ export default {
       return {
         userAuth,
         users:[],
-
+        dragIn:false,
       }
     },
     methods: {
@@ -68,6 +73,11 @@ export default {
             this.$swal({ text: "에러발생!", icon: 'error' })
           }
         })
+      },
+      dropInputTag(e){
+        let file = Array.from(e.dataTransfer.files, v => v)[0]
+        console.log(file);
+        //this.uploadImage(file)
       },
       renderMessage(value, sender){
         let chat = this.$refs.chat.kendoWidget()
@@ -181,6 +191,7 @@ export default {
 }
 </script>
 <style scoped>
+.drag-over { background-color: #ff0; }
 .active{
     background-color: rgba(0,0,0,0.3);
 }
