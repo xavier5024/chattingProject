@@ -19,14 +19,13 @@ class TestController extends Controller
     {   
         $user = Auth::user();
 
-        
         //User::find(7)->delete();
 
         //$users = DB::table("users")->get()->where('deleted_at', null)->toArray();
 
         $users = json_decode(User::withTrashed()->get(), true);
 
-        print_r2($users);
+        //print_r2($users);
         
         //print_r2($users);
 
