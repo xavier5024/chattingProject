@@ -63,11 +63,15 @@ export default {
         userAuth,
         users:[],
         dragIn:false,
+        file:null
       }
     },
     methods: {
       sendMessage (e) {
-        commonChatting(e.text)
+        console.log(e);
+        let attachments = this.file
+        this.file = null
+        commonChatting(e.text, attachments)
         .then(response => {
           if(response.status != 200){
             this.$swal({ text: "에러발생!", icon: 'error' })
@@ -76,7 +80,8 @@ export default {
       },
       dropInputTag(e){
         let file = Array.from(e.dataTransfer.files, v => v)[0]
-        console.log(file);
+        this.file = file
+        this.sendMessage({"text":""})
         //this.uploadImage(file)
       },
       renderMessage(value, sender){

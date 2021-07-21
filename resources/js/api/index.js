@@ -41,14 +41,15 @@ function userLogoutApi () {
 }
 
 //공용채팅
-function commonChatting (message){
+function commonChatting (message, attachments){
   const params = new URLSearchParams();
   params.append('message', message);
+  params.append('attachments', attachments);
   return axios.post(`${config.baseUrl}/commonChatting`, params);
 }
 
 //공용채팅로그
-function commonChattingLog (message){
+function commonChattingLog (){
   return axios.post(`${config.baseUrl}/commonChattingLog`);
 }
 
