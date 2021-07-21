@@ -1,4 +1,5 @@
 Chatting Program with Laravel and Vue.js
+Chatting component Design taken from kendo-ui Vue Free Trials(https://www.telerik.com/kendo-vue-ui/)
 
 **Usage**
 Quick Start
