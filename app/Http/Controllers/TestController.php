@@ -15,22 +15,35 @@ use App\Models\User;
 
 class TestController extends Controller
 {
-    public function test(Request $request)
+    public function test1(Request $request)
+    {   
+        $users = User::join("common_chats AS cc", "users.id", "cc.id")->get();
+
+        $users = json_decode($users, true);
+
+        print_r2($users);
+    }
+    public function test2(Request $request)
+    {   
+        $users = User::join("common_chats AS cc", "users.id", "cc.id")->where("cc.id", '3')->orderBy("cc.id")->dd();
+
+    }
+    public function test3(Request $request)
+    {   
+        $user = User::get()->toArray();
+
+        //print_r2($user);
+        
+        $users = User::find("1")->dd();
+
+
+    }
+    public function test4(Request $request)
     {   
         $user = Auth::user();
-
-        //User::find(7)->delete();
-
-        //$users = DB::table("users")->get()->where('deleted_at', null)->toArray();
-
         $users = json_decode(User::withTrashed()->get(), true);
+    }            
 
-        //print_r2($users);
-        
-        //print_r2($users);
-
-        //return $users;
-    }
 }
 
 function print_r2($var)

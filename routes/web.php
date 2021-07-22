@@ -18,7 +18,13 @@ use App\Http\Controllers\TestController;
 |
 */
 
-Route::get('test', [TestController::class,'test']);
+Route::get('test1', [TestController::class,'test1']);
+Route::get('test2', [TestController::class,'test2']);
+Route::get('test3', [TestController::class,'test3']);
+Route::get('test4', [TestController::class,'test4']);
+Route::get('test5', [TestController::class,'test5']);
+
+
 Route::get('testing', function(Request $request){
     broadcast(new \App\Events\CommonChatting("common"));
 });
