@@ -42,10 +42,10 @@ function userLogoutApi () {
 
 //공용채팅
 function commonChatting (message, attachments){
-  const params = new URLSearchParams();
+  const params = new FormData();
   params.append('message', message);
   params.append('attachments', attachments);
-  return axios.post(`${config.baseUrl}/commonChatting`, params);
+  return axios.post(`${config.baseUrl}/commonChatting`, params, {headers: {'Content-Type': 'multipart/form-data'}});
 }
 
 //공용채팅로그

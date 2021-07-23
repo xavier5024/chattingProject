@@ -68,7 +68,6 @@ export default {
     },
     methods: {
       sendMessage (e) {
-        console.log(e);
         let attachments = this.file
         this.file = null
         commonChatting(e.text, attachments)
@@ -176,12 +175,13 @@ export default {
           this.users = this.users.filter(value => value.id !== user.id)
         })
         .listen('CommonChatting', (data) => {
-          if(data.user.id !== this.userAuth.id){
+          console.log(data)
+          if(data.data.type != "message" || data.user.id !== this.userAuth.id){
             let value = {
-                  "type" : "message",
-                  "sender_name": data.user.name,
-                  "sender_img" : data.user.profile_src,
-                  //"file_url"   : data.data.file,
+                  "type" : data.data.type,
+                  "name": data.user.name,
+                  "profile_src" : data.user.profile_src,
+                  "file"   : data.data.file,
                   "content"    : data.data.message,
                   "id"  : data.user.id
                   }
