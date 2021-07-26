@@ -40,7 +40,7 @@ return [
                 'encrypted' => true,
                 'host' => 'xavier5024.synology.me',
                 'port' => 6001,
-                'scheme' => 'https'
+                //'scheme' => 'https'
             ],
         ],
 
