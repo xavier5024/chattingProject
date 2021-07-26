@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // HTTP Request & Response 관련 기본 설정
 const config = {
-  baseUrl: 'http://xavier5024.synology.me:8080/data'
+  baseUrl: '/data'
 };
 
 /**
