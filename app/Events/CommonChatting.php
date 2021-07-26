@@ -45,6 +45,7 @@ class CommonChatting implements ShouldBroadcast
     {
         $user = Auth::user();
         $data = request()->all();
+        /*
         $insert_arr = array();
         $insert_arr["id"] = Auth::id();
         $insert_arr["content"] = (request()->message) ? request()->message : '';
@@ -83,6 +84,7 @@ class CommonChatting implements ShouldBroadcast
             }
         }
         DB::table('common_chats')->insert($insert_arr);
+        */
         return [
           "data"   => $data,
           "user"	=> $user
