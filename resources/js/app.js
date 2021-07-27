@@ -27,9 +27,9 @@ window.Echo = new Echo({
     cluster:process.env.MIX_PUSHER_APP_CLUSTER,
     wsHost: window.location.hostname,
     wsPort: 6001,
-    wssPort: 6001, // https 시 추가
-    encrypted: true, // ssl사용 시 encrypted: true 설정
-    enabledTransports: ['ws', 'wss'],
+   // wssPort: 6001, // https 시 추가
+    //encrypted: true, // ssl사용 시 encrypted: true 설정
+    //enabledTransports: ['ws', 'wss'],
     forceTLS: false
 });
 
