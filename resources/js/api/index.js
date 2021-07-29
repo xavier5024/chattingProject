@@ -25,7 +25,6 @@ function sampleApi(method) {
   }
 }
 
-
 // 로그인
 function userLoginApi (id, password) {
   const params = new URLSearchParams();
@@ -33,6 +32,13 @@ function userLoginApi (id, password) {
   params.append('password', password);
   
   return axios.post(`${config.baseUrl}/login`, params);
+}
+
+function memberJoinApi(data, profile_img){
+  const params = new FormData();
+  params.append('data', JSON.stringify(data));
+  if(profile_img)params.append('profile_img', profile_img);
+  return axios.post(`${config.baseUrl}/join`, params, {headers: {'Content-Type': 'multipart/form-data'}});
 }
 
 // 로그아웃
@@ -58,5 +64,6 @@ export {
   userLoginApi,
   userLogoutApi,
   commonChatting,
-  commonChattingLog
+  commonChattingLog,
+  memberJoinApi
 };

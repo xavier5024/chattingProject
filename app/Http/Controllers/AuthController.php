@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Arr;
 
 use App\Models\User;
 
@@ -76,4 +78,90 @@ class AuthController extends BaseController
 
         return $logoutResult;
     }
+    public function join(Request $request): array
+    {
+        $result = array();
+        $data = json_decode($request->get("data"), true);
+        if (count($data)) {
+            foreach ($data as $key => $value) {
+                $request->request->set($key, $value);
+            }
+            request()->request->remove('data');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'id'    => 'required|string|max:100|unique:users,user_id',
+            'name'  => 'required|string|max:100',
+            'email' => 'required|email:rfc,dns|max:50|unique:users',
+            'tel'   => 'required|string|max:13|unique:users',
+            'password' => 'required|string|min:8|max:255|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[@!$#%]).*$/',
+            'password_confirmation' => 'string|min:8|max:255|same:password',
+            'profile_img' => 'image|max:4048'
+        ]);
+        
+        if($validator->fails()) {         
+            return array(
+                'result' => false,
+                'message' => implode("<br>", Arr::flatten($validator->messages()->toArray()))
+            );
+        }
+
+        $check = DB::table('sd_admin as a')
+            ->select(DB::raw("COUNT(id) AS cnt"))
+            ->where("id", $data["id"])
+            ->first();
+
+        if ($check->cnt > 0) {
+            $result["result"] = false;
+            $result["message"] = "해당 아이디가 이미 존재합니다.";
+            return $result;
+        }
+        
+        $check = DB::table('sd_admin as a')
+            ->select(DB::raw("COUNT(tel) AS cnt"))
+            ->where("tel", $data["tel"])
+            ->first();
+
+        if ($check->cnt > 0) {
+            $result["result"] = false;
+            $result["message"] = "해당 전화번호가 이미 존재합니다.";
+            return $result;
+        }
+        
+        $insertdata = array('user_id' => $data["id"], 'name'=>$data["name"], 'password' => Hash::make($data["password"]), 'email' => $data["email"], 'tel' => $data["tel"]);
+
+        if (request()->hasFile('profile_img') && request()->profile_img->isValid()) {
+            $logical_name = request()->file('profile_img')->getClientOriginalName();
+            $ext = substr($logical_name, strrpos($logical_name, "."));
+            $physical_name = round(microtime(true)).$ext;
+            $filepath = public_path("data");
+            $path = "/".date("Y")."/".date("md");
+            if (!is_dir(public_path("data")."/".date("Y"))) {
+                mkdir(public_path("data")."/".date("Y"));
+            }
+            if (!is_dir(public_path("data")."/".$path)) {
+                mkdir(public_path("data")."/". $path);
+            }
+            $file_result = request()->file('profile_img')->move($filepath.$path,$physical_name);
+            if ($file_result) {
+                $insertdata["profile_src"] = "/".$path."/".$physical_name;
+            }
+        }
+
+        $user_id = DB::table('users')->insertGetId($insertdata);
+
+        $user = User::find($user_id);
+        // 로그인 진행
+        Auth::login($user, true);
+
+        $result['result'] = true;
+        $userInfo = $user->toArray();
+        $userInfo['auth'] = true;
+        $result["message"] = "가입이 완료되었습니다.";
+        $result['data'] = $userInfo;
+
+        return $result;
+
+    }
+
 }

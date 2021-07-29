@@ -30,7 +30,7 @@
                   </CInput>
                   <CRow>
                     <CCol col="6" class="text-left">
-
+                      <CButton color="success" class="px-4" @click="$router.replace({name: 'memberJoin'});">Join</CButton>
                     </CCol>
                     <CCol col="6" class="text-right">
                       <CButton color="primary" class="px-4" @click="userLogin" :disabled="loginBtnState === true">Login</CButton>

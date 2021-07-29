@@ -9,6 +9,7 @@ import memberContainer from '../components/member/Container';
 
 // Admin
 import LoginView from '../views/Login';
+import memberJoinView from '../views/Join';
 
 Vue.use(VueRouter);
 
@@ -56,6 +57,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: LoginView
+  },
+  {
+    path: '/join',
+    name: 'memberJoin',
+    component: memberJoinView
   },
   { /* 404 error 방지 */
     path: '*',
