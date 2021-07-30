@@ -1,5 +1,10 @@
 <template>
   <CContainer>
+    <privateChat
+      v-if="privateChatModal"
+      id="privateChatView"
+      :privateTo="privateTo"
+    />
     <CRow>
       <CCol md="4" class="bg-success py-3">
         <CCard bodyWrapper color="dark">
@@ -14,9 +19,9 @@
           <CCardBody style="height:500px;">
             <CListGroup :flush="true" style="overflow:auto">
               <CListGroupItem href="#" v-for="(user, idx) in users" :key="idx" >
-                <div class="d-flex bd-highlight">
+                <div class="d-flex bd-highlight" @click="privateChat(user)">
                   <div class="img_cont">
-                    <img :src="user.profile_src" class="rounded-circle user_img">
+                    <img :src="user.profile_src" class="rounded-circle user_img" >
                     <span class="online_icon"></span>
                   </div>
                   <div class="user_info">
@@ -50,6 +55,8 @@
 
 <script>
 import { Chat } from '@progress/kendo-chat-vue-wrapper'
+import privateChat from './PrivateChatting';
+
 import {commonChatting,commonChattingLog} from '../../api';
 import $ from "jquery";
 
@@ -57,13 +64,16 @@ export default {
   name: 'Chatting',
     components: {
         'chat': Chat,
+        'privateChat' : privateChat
     },
     data() {
       return {
         userAuth,
         users:[],
         dragIn:false,
-        file:null
+        file:null,
+        privateChatModal:false,
+        privateTo:null,
       }
     },
     methods: {
@@ -82,6 +92,13 @@ export default {
         this.file = file
         this.sendMessage({"text":""})
         //this.uploadImage(file)
+      },
+      privateChat(user){
+        if(this.userAuth.id == user.id)return;
+        this.privateTo = user;
+        this.privateChatModal = true;
+        //window.open("/member/privateChat/"+user.id);
+        
       },
       renderMessage(value, sender){
         let chat = this.$refs.chat.kendoWidget()
@@ -182,20 +199,21 @@ export default {
                   "name": data.user.name,
                   "profile_src" : data.user.profile_src,
                   "file"   : data.data.file,
-                  "content"    : data.data.message,
+                  "content"    : (data.data.message) ?? '',
                   "id"  : data.user.id
                   }
             let sender = {id : data.user.id, name:data.user.name, iconUrl:data.user.profile_src}
             this.renderMessage(value, sender)
           }
         })
-    },    
+    },
     destroyed(){
       window.Echo.leave('monitoring.common')
     }
 }
 </script>
 <style scoped>
+#privateChatView {position:absolute;z-index: 9;}
 .drag-over { background-color: #ff0; }
 .active{
     background-color: rgba(0,0,0,0.3);

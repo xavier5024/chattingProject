@@ -16,7 +16,6 @@ import '@progress/kendo-theme-default/dist/all.css'
 
 import { Chat, ChatInstaller } from '@progress/kendo-chat-vue-wrapper'
 
-
 import Echo from 'laravel-echo';
 
 window.Pusher = require('pusher-js');

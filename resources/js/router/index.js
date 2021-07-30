@@ -4,6 +4,9 @@ import VueRouter from 'vue-router';
 //member
 import DashboardView from '../views/member/Dashboard';
 import ChattingView from '../views/member/Chatting';
+import privateChatView from '../views/member/PrivateChatting';
+
+
 
 import memberContainer from '../components/member/Container';
 

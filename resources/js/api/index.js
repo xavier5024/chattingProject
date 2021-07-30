@@ -59,11 +59,19 @@ function commonChattingLog (){
   return axios.post(`${config.baseUrl}/commonChattingLog`);
 }
 
+//개인 채팅 로그
+function privateChattingLog(privateToId){
+  const params = new URLSearchParams();
+  params.append('privateToId', privateToId);
+  return axios.post(`${config.baseUrl}/privateChattingLog`, params);
+}
+
 export {
   sampleApi,
   userLoginApi,
   userLogoutApi,
   commonChatting,
   commonChattingLog,
-  memberJoinApi
+  memberJoinApi,
+  privateChattingLog
 };

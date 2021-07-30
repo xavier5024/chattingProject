@@ -34,12 +34,15 @@ Route::post('data/login', [AuthController::class,'login']);
 Route::match(array('GET', 'POST') , 'data/logout', [AuthController::class,'logout']);
 Route::post('data/join', [AuthController::class,'join']);
 
+Route::post('/data/privateChattingLog', [ChatController::class, 'privateChattingLog'])->middleware('auth');
+
+
 Route::post('/data/commonChatting', function(Request $request){
 	broadcast(new \App\Events\CommonChatting("common"));
     return "ok";
 })->middleware('auth');
 
-Route::post('/data/commonChattingLog', [ChatController::class, 'commonChattingLog'])->middleware('auth')->middleware('auth');
+Route::post('/data/commonChattingLog', [ChatController::class, 'commonChattingLog'])->middleware('auth');
 
 Route::get('/{any?}', function () {
     $user = Auth::user();

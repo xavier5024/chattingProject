@@ -106,28 +106,6 @@ class AuthController extends BaseController
             );
         }
 
-        $check = DB::table('sd_admin as a')
-            ->select(DB::raw("COUNT(id) AS cnt"))
-            ->where("id", $data["id"])
-            ->first();
-
-        if ($check->cnt > 0) {
-            $result["result"] = false;
-            $result["message"] = "해당 아이디가 이미 존재합니다.";
-            return $result;
-        }
-        
-        $check = DB::table('sd_admin as a')
-            ->select(DB::raw("COUNT(tel) AS cnt"))
-            ->where("tel", $data["tel"])
-            ->first();
-
-        if ($check->cnt > 0) {
-            $result["result"] = false;
-            $result["message"] = "해당 전화번호가 이미 존재합니다.";
-            return $result;
-        }
-        
         $insertdata = array('user_id' => $data["id"], 'name'=>$data["name"], 'password' => Hash::make($data["password"]), 'email' => $data["email"], 'tel' => $data["tel"]);
 
         if (request()->hasFile('profile_img') && request()->profile_img->isValid()) {
@@ -144,7 +122,7 @@ class AuthController extends BaseController
             }
             $file_result = request()->file('profile_img')->move($filepath.$path,$physical_name);
             if ($file_result) {
-                $insertdata["profile_src"] = "/".$path."/".$physical_name;
+                $insertdata["profile_src"] = "/data".$path."/".$physical_name;
             }
         }
 

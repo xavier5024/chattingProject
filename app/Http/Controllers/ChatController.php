@@ -20,4 +20,23 @@ class ChatController extends Controller
         $common_chat = DB::table('common_chats AS cc')->select("cc.id", "cc.content", "cc.regDate", "cc.type", "cc.file", "users.name", "users.profile_src")->join("users","cc.id", "users.id")->get();
         return $common_chat;
     }
+    public function privateChattingLog(Request $request)
+    {
+        $result = array();
+        $privateToId = $request->get("privateToId");
+        $userId = Auth::id();
+        $channelname = ($userId < $privateToId) ? $userId."to".$privateToId : $privateToId."to".$userId;
+        $chat = DB::table('notifications')->where("notifiable_id", $userId)->where("data->send_id", $privateToId);
+        $chatting = DB::table('notifications')->where("notifiable_id", $privateToId)->where("data->send_id", $userId)->union($chat)->orderBy("created_at")->get()->toArray();
+
+        for($idx=0; $idx<count($chatting); $idx++){
+            $chatting[$idx]->data = json_decode($chatting[$idx]->data, true);
+        }
+
+        $result["result"] = true;
+        $result["channelname"] = $channelname;
+        $result["chatting"] = $chatting;
+
+        return $result;
+    }
 }
