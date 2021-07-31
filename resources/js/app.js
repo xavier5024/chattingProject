@@ -34,11 +34,6 @@ if(process.env.MIX_PUSHER_SSL == "true"){
   echo_config.encrypted = true;  // ssl사용 시 encrypted: true 설정
   echo_config.enabledTransports = ['ws', 'wss'];
 }
-
-console.log(process.env);
-
-console.log(echo_config);
-
 window.Echo = new Echo(echo_config);
 
 Vue.use(ChatInstaller)
