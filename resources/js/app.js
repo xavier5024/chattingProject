@@ -29,12 +29,13 @@ let echo_config = {
   forceTLS: false
 };
 
-
 if(process.env.MIX_PUSHER_SSL == "true"){
   echo_config.wssPort = 6001;  // https 시 추가
   echo_config.encrypted = true;  // ssl사용 시 encrypted: true 설정
   echo_config.enabledTransports = ['ws', 'wss'];
 }
+
+console.log(echo_config);
 
 window.Echo = new Echo(echo_config);
 
