@@ -35,6 +35,8 @@ if(process.env.MIX_PUSHER_SSL == "true"){
   echo_config.enabledTransports = ['ws', 'wss'];
 }
 
+console.log(process.env);
+
 console.log(echo_config);
 
 window.Echo = new Echo(echo_config);
