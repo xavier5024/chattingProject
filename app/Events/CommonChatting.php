@@ -22,12 +22,10 @@ class CommonChatting implements ShouldBroadcast
      *
      * @return void
      */
-    private $user_id;
 
-    public function __construct($user_id)
+    public function __construct()
     {
         //
-        $this->user_id = $user_id;
     }
 
     /**
@@ -38,7 +36,7 @@ class CommonChatting implements ShouldBroadcast
     public function broadcastOn()
     {
         // redis채널이름 
-        return new PresenceChannel('monitoring.'.$this->user_id);
+        return new PresenceChannel('monitoring.common');
     }
 
     public function broadcastWith()

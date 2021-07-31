@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request as Request;
 use Illuminate\Http\Response;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+
+use App\Notifications\privateWhisper;
 
 use App\Models\User;
 
@@ -37,6 +38,27 @@ class ChatController extends Controller
         $result["channelname"] = $channelname;
         $result["chatting"] = $chatting;
 
+        return $result;
+    }
+    public function commonChatting(Request $request)
+    {
+        $result = array();
+        broadcast(new \App\Events\CommonChatting());
+        $result["result"] = true;
+        return $result;
+    }
+    public function privateChatting(Request $request)
+    {
+        $result      = array();
+        $user        = Auth::user();
+        $message     = $request->get("message");
+        $privateTo   = $request->get("privateTo");
+        $channel_name = $request->get("channel_name");
+
+        $privateUser = User::find($privateTo);
+        $privateUser->notify(new privateWhisper($user->id, $privateTo, $message));
+        broadcast(new \App\Events\PrivateChatting($channel_name));
+        $result["result"] = true;
         return $result;
     }
 }

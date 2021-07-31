@@ -54,6 +54,16 @@ function commonChatting (message, attachments){
   return axios.post(`${config.baseUrl}/commonChatting`, params, {headers: {'Content-Type': 'multipart/form-data'}});
 }
 
+//개인 채팅
+function privateChatting(message, attachments, privateTo, channel_name){
+  const params = new FormData();
+  params.append('message', message);
+  params.append('channel_name', channel_name);
+  params.append('privateTo', privateTo);
+  params.append('attachments', attachments);
+  return axios.post(`${config.baseUrl}/privateChatting`, params, {headers: {'Content-Type': 'multipart/form-data'}});
+}
+
 //공용채팅로그
 function commonChattingLog (){
   return axios.post(`${config.baseUrl}/commonChattingLog`);
@@ -71,6 +81,7 @@ export {
   userLoginApi,
   userLogoutApi,
   commonChatting,
+  privateChatting,
   commonChattingLog,
   memberJoinApi,
   privateChattingLog

@@ -26,9 +26,10 @@ Broadcast::channel('monitoring.{id}', function ($user, $id) {
         }
     }
     $user->noti = $user_notis;
+    $user->noti_cnt = 0;
     return $user;
 });
 
-Broadcast::channel('App.User.{userId}', function ($user, $userId) {
+Broadcast::channel('App.Models.User.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 });

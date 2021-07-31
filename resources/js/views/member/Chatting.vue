@@ -25,7 +25,7 @@
                     <span class="online_icon"></span>
                   </div>
                   <div class="user_info">
-                    <span v-text="user.name"></span>
+                    <span v-text="user.name"></span><span style="color:red;" v-if="user.noti_cnt != 0" v-text="'('+user.noti_cnt+')'"></span>
                     <span class="whisper_cnt whisper"><span id='whisper_cnt_"+users[idx].idx+"' class='whisper_cnt whisper'></span></span>
                     <p v-text="user.name+' is online'"></p>
                   </div>
@@ -70,6 +70,7 @@ export default {
       return {
         userAuth,
         users:[],
+        noti:[],
         dragIn:false,
         file:null,
         privateChatModal:false,
@@ -98,7 +99,6 @@ export default {
         this.privateTo = user;
         this.privateChatModal = true;
         //window.open("/member/privateChat/"+user.id);
-        
       },
       renderMessage(value, sender){
         let chat = this.$refs.chat.kendoWidget()
@@ -183,16 +183,22 @@ export default {
           })
         window.Echo.join('monitoring.common')
         .here((users) => {
+          let noti = users.find((user) => user.id === this.userAuth.id).noti;
+          this.noti = noti;
+          for(let i=0;i<noti.length;i++){
+            if(noti[i].send_cnt && users.find((user) => user.id === noti[i].send_id))users.find((user) => user.id === noti[i].send_id).noti_cnt = noti[i].send_cnt
+          }
           this.users = users.filter((user) => user.id === this.userAuth.id).concat(users.filter((user) => user.id !== this.userAuth.id))
+          console.log(this.users);
         })
         .joining((user) => {
-          this.users.push(user)
+          if(this.noti.find((val)=>val.send_id === user.id))user.noti_cnt = this.noti.find((val)=>val.send_id === user.id).send_cnt;
+          this.users.push(user);
         })
         .leaving((user) => {
           this.users = this.users.filter(value => value.id !== user.id)
         })
         .listen('CommonChatting', (data) => {
-          console.log(data)
           if(data.data.type != "message" || data.user.id !== this.userAuth.id){
             let value = {
                   "type" : data.data.type,
@@ -206,6 +212,23 @@ export default {
             this.renderMessage(value, sender)
           }
         })
+				window.Echo.private('App.Models.User.' + this.userAuth.id)
+				.notification((notification) => {
+					if(notification.type == "clear"){
+						$('#whisper_cnt_'+notification.send_id).text("");
+					}else{
+            console.log(this.noti);
+            if(this.noti.find((val)=>val.send_id === notification.send_id)){
+              this.noti.find((val)=>val.send_id === notification.send_id).send_cnt =  notification.noti_cnt;
+            }else{
+              let obj = {"send_id" : notification.send_id, "send_cnt" : notification.noti_cnt};
+              this.noti.push(obj);
+            }
+            if(this.users.find((user) => user.id === notification.send_id))this.users.find((user) => user.id === notification.send_id).noti_cnt = notification.noti_cnt;
+
+					}
+				});
+
     },
     destroyed(){
       window.Echo.leave('monitoring.common')
@@ -213,7 +236,7 @@ export default {
 }
 </script>
 <style scoped>
-#privateChatView {position:absolute;z-index: 9;}
+#privateChatView {position:absolute;z-index: 2021;}
 .drag-over { background-color: #ff0; }
 .active{
     background-color: rgba(0,0,0,0.3);

@@ -32,7 +32,7 @@
 
 <script>
 import { Chat } from '@progress/kendo-chat-vue-wrapper'
-import {commonChatting,privateChattingLog} from '../../api';
+import {privateChatting,privateChattingLog} from '../../api';
 import $ from "jquery";
 import 'jquery-ui-dist/jquery-ui';
 
@@ -46,6 +46,7 @@ export default {
       return {
         userAuth,
         users:[],
+        channel_name:"",
         dragIn:false,
         file:null
       }
@@ -54,7 +55,7 @@ export default {
       sendMessage (e) {
         let attachments = this.file
         this.file = null
-        commonChatting(e.text, attachments)
+        privateChatting(e.text, attachments, this.privateTo.id ,this.channel_name)
         .then(response => {
           if(response.status != 200){
             this.$swal({ text: "에러발생!", icon: 'error' })
@@ -136,7 +137,6 @@ export default {
       },
       privateChatClose(){
         this.$parent.$data.privateChatModal = false;
-
       }
 
     },
@@ -147,48 +147,53 @@ export default {
         let vm = this
         privateChattingLog(this.privateTo.id)
           .then(response => {
-            if(response.data.chatting.length>0){
-              response.data.chatting.forEach(function(value, index) {
-                    let user = null;
-                    console.log(value);
-                    if(value.data.send_id == vm.privateTo.id){
-                        user = vm.privateTo;
-                    }else if(value.data.send_id == vm.userAuth.id){
-                        user = vm.userAuth;
-                    }
-                    let sender = {id : user.id, name:user.name, iconUrl:user.profile_src};
-                    let send_value = {type:"message", content : value.data.message , id : sender.id};
-                    vm.renderMessage(send_value, sender)
-              })
-            }
-          })
-        window.Echo.join('monitoring.common')
-        .here((users) => {
-          this.users = users.filter((user) => user.id === this.userAuth.id).concat(users.filter((user) => user.id !== this.userAuth.id))
-        })
-        .joining((user) => {
-          this.users.push(user)
-        })
-        .leaving((user) => {
-          this.users = this.users.filter(value => value.id !== user.id)
-        })
-        .listen('CommonChatting', (data) => {
-          if(data.data.type != "message" || data.user.id !== this.userAuth.id){
-            let value = {
-                  "type" : data.data.type,
-                  "name": data.user.name,
-                  "profile_src" : data.user.profile_src,
-                  "file"   : data.data.file,
-                  "content"    : (data.data.message) ?? '',
-                  "id"  : data.user.id
+            if(response.data.result){
+              vm.channel_name = response.data.channelname;
+              if(response.data.chatting.length>0){
+                response.data.chatting.forEach(function(value, index) {
+                  let user = null;
+                  if(value.data.send_id == vm.privateTo.id){
+                      user = vm.privateTo;
+                  }else if(value.data.send_id == vm.userAuth.id){
+                      user = vm.userAuth;
                   }
-            let sender = {id : data.user.id, name:data.user.name, iconUrl:data.user.profile_src}
-            this.renderMessage(value, sender)
-          }
+                  let sender = {id : user.id, name:user.name, iconUrl:user.profile_src};
+                  let send_value = {type:"message", content : value.data.message , id : sender.id};
+                  vm.renderMessage(send_value, sender);
+                })
+              }
+              window.Echo.join('monitoring.'+vm.channel_name)
+              .here((users) => {
+                this.users = users.filter((user) => user.id === this.userAuth.id).concat(users.filter((user) => user.id !== this.userAuth.id))
+              })
+              .joining((user) => {
+                this.users.push(user)
+              })
+              .leaving((user) => {
+                this.users = this.users.filter(value => value.id !== user.id)
+              })
+              .listen('PrivateChatting', (data) => {
+                if(data.data.type != "message" || data.user.id !== this.userAuth.id){
+                  let value = {
+                        "type" : data.data.type,
+                        "name": data.user.name,
+                        "profile_src" : data.user.profile_src,
+                        "file"   : data.data.file,
+                        "content"    : (data.data.message) ?? '',
+                        "id"  : data.user.id
+                        }
+                  let sender = {id : data.user.id, name:data.user.name, iconUrl:data.user.profile_src}
+                  this.renderMessage(value, sender)
+                }
+              })          
+            } else {
+              this.$swal({ text: "오류가 발생하였습니다.", icon: 'error' });
+              this.$parent.$data.privateChatModal = false;
+            }
         })
     },
     destroyed(){
-      window.Echo.leave('monitoring.common')
+      window.Echo.leave('monitoring.'+this.channel_name)
     }
 }
 </script>

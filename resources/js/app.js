@@ -29,6 +29,7 @@ let echo_config = {
   forceTLS: false
 };
 
+
 if(process.env.MIX_PUSHER_SSL == "true"){
   echo_config.wssPort = 6001;  // https 시 추가
   echo_config.encrypted = true;  // ssl사용 시 encrypted: true 설정
