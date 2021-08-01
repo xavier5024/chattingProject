@@ -25,7 +25,7 @@
                     <span class="online_icon"></span>
                   </div>
                   <div class="user_info">
-                    <span v-text="user.name"></span><span style="color:red;" v-if="user.noti_cnt != 0" v-text="'('+user.noti_cnt+')'"></span>
+                    <span v-text="user.name"></span><span style="color:red;" v-if="user.noti_cnt && user.noti_cnt != 0" v-text="'('+user.noti_cnt+')'"></span>
                     <span class="whisper_cnt whisper"><span id='whisper_cnt_"+users[idx].idx+"' class='whisper_cnt whisper'></span></span>
                     <p v-text="user.name+' is online'"></p>
                   </div>
@@ -189,7 +189,6 @@ export default {
             if(noti[i].send_cnt && users.find((user) => user.id === noti[i].send_id))users.find((user) => user.id === noti[i].send_id).noti_cnt = noti[i].send_cnt
           }
           this.users = users.filter((user) => user.id === this.userAuth.id).concat(users.filter((user) => user.id !== this.userAuth.id))
-          console.log(this.users);
         })
         .joining((user) => {
           if(this.noti.find((val)=>val.send_id === user.id))user.noti_cnt = this.noti.find((val)=>val.send_id === user.id).send_cnt;
@@ -215,9 +214,9 @@ export default {
 				window.Echo.private('App.Models.User.' + this.userAuth.id)
 				.notification((notification) => {
 					if(notification.type == "clear"){
-						$('#whisper_cnt_'+notification.send_id).text("");
+						this.noti.find((val)=>val.send_id === notification.send_id).send_cnt = 0;
+            if(this.users.find((user) => user.id === notification.send_id))this.users.find((user) => user.id === notification.send_id).noti_cnt = 0;
 					}else{
-            console.log(this.noti);
             if(this.noti.find((val)=>val.send_id === notification.send_id)){
               this.noti.find((val)=>val.send_id === notification.send_id).send_cnt =  notification.noti_cnt;
             }else{

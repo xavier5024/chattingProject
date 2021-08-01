@@ -76,6 +76,13 @@ function privateChattingLog(privateToId){
   return axios.post(`${config.baseUrl}/privateChattingLog`, params);
 }
 
+//개인 채팅 읽음
+function privateRead(privateTo){
+  const params = new URLSearchParams();
+  params.append('privateTo', privateTo);
+  return axios.post(`${config.baseUrl}/privateRead`, params);
+}
+
 export {
   sampleApi,
   userLoginApi,
@@ -84,5 +91,6 @@ export {
   privateChatting,
   commonChattingLog,
   memberJoinApi,
-  privateChattingLog
+  privateChattingLog,
+  privateRead
 };

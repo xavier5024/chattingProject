@@ -42,6 +42,8 @@ Route::post('/data/privateChatting', [ChatController::class, 'privateChatting'])
 
 Route::post('/data/privateChattingLog', [ChatController::class, 'privateChattingLog'])->middleware('auth');
 
+Route::post('/data/privateRead', [ChatController::class, 'privateRead'])->middleware('auth');
+
 Route::get('/{any?}', function () {
     $user = Auth::user();
     $userInfo = array();

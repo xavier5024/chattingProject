@@ -2,7 +2,7 @@
   <CContainer id="privateChatView"  style="width:450px">
     <CRow class="bg-info" style="color:white" alignVertical="center">
             <CCol :md="{size:'2'}">
-                <div class="img_cont"><img :src="privateTo.profile_src" class="rounded-circle user_img"><span class="online_icon"></span></div>
+                <div class="img_cont"><img :src="privateTo.profile_src" class="rounded-circle user_img"><span :class="(users.length > 1) ? 'online_icon' : 'online_icon offline'"></span></div>
             </CCol>
             <CCol  :md="{size:'7'}">
                 <h2 v-text="privateTo.name+'님과의 대화'"></h2>
@@ -32,7 +32,7 @@
 
 <script>
 import { Chat } from '@progress/kendo-chat-vue-wrapper'
-import {privateChatting,privateChattingLog} from '../../api';
+import {privateChatting,privateChattingLog,privateRead} from '../../api';
 import $ from "jquery";
 import 'jquery-ui-dist/jquery-ui';
 
@@ -61,6 +61,9 @@ export default {
             this.$swal({ text: "에러발생!", icon: 'error' })
           }
         })
+      },
+      online_check(){
+        return this.users.find((user) => user.id === privateTo)
       },
       dropInputTag(e){
         let file = Array.from(e.dataTransfer.files, v => v)[0]
@@ -184,6 +187,12 @@ export default {
                         }
                   let sender = {id : data.user.id, name:data.user.name, iconUrl:data.user.profile_src}
                   this.renderMessage(value, sender)
+                  privateRead(this.privateTo.id)
+                  .then(response => {
+                    if(!response.data.result){
+                      this.$swal({ text: "오류가 발생하였습니다.", icon: 'error' });
+                    }
+                  })
                 }
               })          
             } else {
