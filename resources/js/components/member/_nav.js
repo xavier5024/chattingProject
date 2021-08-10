@@ -18,6 +18,13 @@ export default [
          to: '/member/chatting',
          icon: 'cil-3d'
       },
+      {
+        _name: 'CSidebarNavItem',
+        name: '회원',
+        to: '/member/memberList',
+        icon: 'cil-people'
+     },
+
       // {
       // _name: 'CSidebarNavItem',
       //   name: '테스트',

@@ -4,9 +4,8 @@ import VueRouter from 'vue-router';
 //member
 import DashboardView from '../views/member/Dashboard';
 import ChattingView from '../views/member/Chatting';
-import privateChatView from '../views/member/PrivateChatting';
-
-
+import MemberListView from '../views/member/MemberList';
+import MemberRegisterView from '../views/member/MemberRegister';
 
 import memberContainer from '../components/member/Container';
 
@@ -53,7 +52,17 @@ const routes = [
                 path: '/member/chatting',
                 name: 'Chatting',
                 component: ChattingView
-            }            
+            },
+            {
+              path: '/member/memberList',
+              name: 'memberList',
+              component: MemberListView
+            },
+            {
+              path: '/member/memberRegister',
+              name: 'memberRegister',
+              component: MemberRegisterView
+            }     
         ]
   },
   {

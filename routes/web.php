@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\MemberController;
+
 use App\Http\Controllers\TestController;
 /*
 |--------------------------------------------------------------------------
@@ -29,20 +31,18 @@ Route::get('testing', function(Request $request){
     broadcast(new \App\Events\CommonChatting("common"));
 });
 
-
 Route::post('data/login', [AuthController::class,'login']);
-Route::match(array('GET', 'POST') , 'data/logout', [AuthController::class,'logout']);
+Route::match(array('GET', 'POST'), 'data/logout', [AuthController::class,'logout']);
 Route::post('data/join', [AuthController::class,'join']);
 
-Route::post('/data/commonChatting', [ChatController::class, 'commonChatting'])->middleware('auth');
-
-Route::post('/data/commonChattingLog', [ChatController::class, 'commonChattingLog'])->middleware('auth');
-
-Route::post('/data/privateChatting', [ChatController::class, 'privateChatting'])->middleware('auth');
-
-Route::post('/data/privateChattingLog', [ChatController::class, 'privateChattingLog'])->middleware('auth');
-
-Route::post('/data/privateRead', [ChatController::class, 'privateRead'])->middleware('auth');
+Route::middleware("auth")->prefix("data")->group(function(){
+    Route::post('/commonChatting', [ChatController::class, 'commonChatting']);
+    Route::post('/commonChattingLog', [ChatController::class, 'commonChattingLog']);
+    Route::post('/privateChatting', [ChatController::class, 'privateChatting']);
+    Route::post('/privateChattingLog', [ChatController::class, 'privateChattingLog']);
+    Route::post('/privateRead', [ChatController::class, 'privateRead']);
+    Route::post('/memberList', [MemberController::class, 'memberList']);
+});
 
 Route::get('/{any?}', function () {
     $user = Auth::user();

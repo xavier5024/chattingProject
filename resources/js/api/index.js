@@ -83,6 +83,26 @@ function privateRead(privateTo){
   return axios.post(`${config.baseUrl}/privateRead`, params);
 }
 
+//회원 리스트
+function memberListApi(){
+  return axios.post(`${config.baseUrl}/memberList`);
+}
+
+//회원 등록
+function memberRegisterApi(){
+  return axios.post(`${config.baseUrl}/memberList`);
+}
+
+//회원 수정
+function memberUpdateApi(){
+  return axios.post(`${config.baseUrl}/memberList`);
+}
+
+//회원 삭제
+function memberDeleteApi(){
+  return axios.post(`${config.baseUrl}/memberList`);
+}
+
 export {
   sampleApi,
   userLoginApi,
@@ -92,5 +112,9 @@ export {
   commonChattingLog,
   memberJoinApi,
   privateChattingLog,
-  privateRead
+  privateRead,
+  memberListApi,
+  memberRegisterApi,
+  memberUpdateApi,
+  memberDeleteApi
 };
