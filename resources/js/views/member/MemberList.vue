@@ -114,7 +114,9 @@
         this.tablePage = TotalPage;
       },
       memberModify(member){
-        console.log(member);
+        this.$router.replace({
+          name: 'memberModify', params: {member_id:member.id}
+        });
 
       }
     },

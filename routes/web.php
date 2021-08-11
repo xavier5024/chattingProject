@@ -42,6 +42,7 @@ Route::middleware("auth")->prefix("data")->group(function(){
     Route::post('/privateChattingLog', [ChatController::class, 'privateChattingLog']);
     Route::post('/privateRead', [ChatController::class, 'privateRead']);
     Route::post('/memberList', [MemberController::class, 'memberList']);
+    Route::post('/memberRead', [MemberController::class, 'memberRead']);
 });
 
 Route::get('/{any?}', function () {

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <CCard class="admin_info">
-      <CCardHeader v-text="(admin_seq) ? '관리자 수정하기' : '관리자 추가하기'">
+    <CCard class="member_info">
+      <CCardHeader v-text="(member_id) ? '관리자 수정하기' : '관리자 추가하기'">
       </CCardHeader>
-      <form id="admin_form">
+      <form id="member_form">
         <CCardBody>
           <CRow>
             <CCol sm="6">
@@ -11,9 +11,9 @@
                   label="아이디"
                   placeholder="아이디를 입력해주세요"
                   size="lg"
-                  name="mb_id"
-                  v-model="admin.id"
-                  :disabled="(admin_seq > 0) ? true : false "
+                  name="id"
+                  v-model="member.id"
+                  :disabled="(member_id > 0) ? true : false "
                   required
               />
             </CCol>
@@ -22,8 +22,8 @@
                   label="이름"
                   placeholder="이름을 입력해주세요"
                   size="lg"
-                  name="mb_name"
-                  v-model="admin.name"
+                  name="name"
+                  v-model="member.name"
                   required
               />
             </CCol>
@@ -35,8 +35,8 @@
                   type="email"
                   placeholder="이메일을 입력해주세요"
                   size="lg"
-                  name="mb_email"
-                  v-model="admin.email"
+                  name="email"
+                  v-model="member.email"
                   required
               />
             </CCol>
@@ -47,12 +47,12 @@
                   placeholder="핸드폰 번호를 '-'없이 숫자만 입력해주세요"
                   size="lg"
                   name="mb_tel"
-                  v-model="admin.tel"
+                  v-model="member.tel"
                   maxlength=11
                   @keypress="isNumber($event)"
                   required
               />
-            </CCol>            
+            </CCol>
           </CRow>
         </CCardBody>
         <CCardBody>
@@ -64,7 +64,7 @@
 
             <CRow style="margin-bottom: 1em">
               <CCol sm="2">
-                <img width="100px" height="100px" ref="profile_img" :src="(admin.path && admin.physical_name) ? admin.path + '/' + admin.physical_name : '//static2.isidae.com/img1/winsidaero/ai_recruit/profile.png'">
+                <img width="100px" height="100px" ref="profile_img" :src="(member.profile_src) ? member.profile_src : '//static2.isidae.com/img1/winsidaero/ai_recruit/profile.png'">
               </CCol>
             </CRow>
           
@@ -88,7 +88,7 @@
                   type="password"
                   placeholder="비밀번호를 입력해주세요"
                   size="lg"
-                  v-model="admin.password"
+                  v-model="member.password"
                   required
               />
             </CCol>
@@ -110,20 +110,20 @@
           <CCol :md="{size:'2'}">
             <CButton block color="secondary" @click="$router.replace({ name: 'memberList'})">목록보기</CButton>
           </CCol>
-          <CCol v-if="admin_seq" :md="{size:'2', offset:4}">
-            <CButton block color="danger" @click="adm_delete">삭제하기</CButton>
+          <CCol v-if="member_id" :md="{size:'2', offset:4}">
+            <CButton block color="danger" @click="member_delete">삭제하기</CButton>
           </CCol>
-          <CCol :md="(!admin_seq) ?{size:'2', offset:6} :{size:'2'}">
-            <CButton block color="info" @click="resister" v-text="(admin_seq) ? '수정하기' : '생성하기'"></CButton>
+          <CCol :md="(!member_id) ?{size:'2', offset:6} :{size:'2'}">
+            <CButton block color="info" @click="resister" v-text="(member_id) ? '수정하기' : '생성하기'"></CButton>
           </CCol>
           <CCol :md="{size:'2'}">
-            <CButton block color="secondary" @click="goToList">취소하기</CButton>
+            <CButton block color="secondary" @click="$router.back()">취소하기</CButton>
           </CCol>
         </CRow>
       </CCardFooter>
       <CElementCover 
         v-if="loading"
-        :boundaries="[{ sides: ['top', 'left'], query: '.card.admin_info' }]"
+        :boundaries="[{ sides: ['top', 'left'], query: '.card.member_info' }]"
         :opacity="0.8"
       >
         <h1 class="d-inline">Loading... </h1><CSpinner size="5xl" color="success"/>
@@ -133,13 +133,13 @@
 </template>
 
 <script>
-  import {memberRegisterApi, memberUpdateApi, memberDeleteApi} from '../../api';
+  import {memberRegisterApi, memberReadApi, memberUpdateApi, memberDeleteApi} from '../../api';
 
   export default {
-    name: "AdminResisterView",
+    name: "MemberResisterView",
     data() {
       return {
-        admin: {
+        member: {
           id: '',
           password: '',
           name:'',
@@ -149,7 +149,7 @@
         },
         profile:null,
         password_conval:"",
-        admin_seq:this.$route.params.admin_seq,
+        member_id:this.$route.params.member_id,
         loading:true,
       }
     },
@@ -158,7 +158,7 @@
         let confirm_message = "";
         let confirm_btn = "";
 
-        if(this.admin_seq){
+        if(this.member_id){
           confirm_message = "수정하시겠습니까?";
           confirm_btn = "수정하기";
         }else{
@@ -170,28 +170,28 @@
 
         if(!confirm)return;
 
-        if(!this.validateId(this.admin.id)){  //아이디 체크
+        if(!this.validateId(this.member.id)){  //아이디 체크
           return;
         }
 
-        if(this.admin_seq > 0 && this.admin.password.length == 0){
-          delete this.admin.password;
+        if(this.member_id > 0 && this.member.password.length == 0){
+          delete this.member.password;
         }else{
-          if(!(this.validatePassword(this.admin.password) && this.password_confirm())){
+          if(!(this.validatePassword(this.member.password) && this.password_confirm())){
             return;
           }
         }
 
-        if(this.isEmail(this.admin.email) && this.isPhone(this.admin.tel)){
-          memberRegisterApi(this.admin, this.profile, this.admin_seq).then(response => {
+        if(this.isEmail(this.member.email) && this.isPhone(this.member.tel)){
+          memberRegisterApi(this.member, this.profile, this.member_id).then(response => {
             const resultData = response.data;
             let self = this;
             if(resultData.result) {
               this.$swal({ text: resultData.message, icon: 'info' }).then(function (alert) {
                 self.$router.replace({
-                  name: 'Admins'
+                  name: 'memberList'
                 });
-                if(userAuth.admin_seq == self.admin_seq){
+                if(userAuth.id == self.member_id){
                   window.location.reload();
                 }
               });
@@ -203,7 +203,7 @@
             this.$swal({ text: error, icon: 'error' });
           });
         }
-        if(!this.admin.password)this.admin.password = '';
+        if(!this.member.password)this.member.password = '';
       },
       validateId (id){
         if (id.length === 0 ){
@@ -218,11 +218,11 @@
           this.$swal({ text: '아이디(ID)는 공백없이 입력하세요', icon: 'error' });
           return false;
         }
-        if(this.admin.name.length ===0){
+        if(this.member.name.length ===0){
           this.$swal({ text: '이름을 입력하세요', icon: 'question' });
           return false;
         }
-        if(this.admin.email.length ===0){
+        if(this.member.email.length ===0){
           this.$swal({ text: '이메일을 입력하세요', icon: 'question' });
           return false;
         }        
@@ -267,7 +267,7 @@
           return true;
         },
         password_confirm(){
-          if(this.admin.password != this.password_conval){
+          if(this.member.password != this.password_conval){
             this.$swal({ text: '비밀번호 확인이 일치하지 않습니다. 다시 한 번 확인해주세요', icon: 'error' });
             return false;
           }
@@ -308,19 +308,19 @@
         this.$refs.profile_img.src = "//static2.isidae.com/img1/winsidaero/ai_recruit/profile.png";
         this.profile = "file_deleted";
       },
-      async adm_delete(event){
+      async member_delete(event){
         const confirm = await this.confirm("", "정말로 삭제하시겠습니까?", "삭제하기");
         if(!confirm)return;
-        if(userAuth.admin_seq == this.admin_seq){
+        if(userAuth.member_id == this.member_id){
           this.$swal({ text: "자기 자신은 삭제할 수 없습니다!", icon: 'error' });
           return;
         }
-        memberDeleteApi(this.admin_seq).then(response => {
+        memberDeleteApi(this.member_id).then(response => {
           const resultData = response.data;
           if(resultData.result) {
             this.$swal({ text: resultData.message, icon: 'info' });
             this.$router.replace({
-              name: 'Admins'
+              name: 'memberList'
             });
           } else {
             this.$swal({ text: resultData.message, icon: 'error' });
@@ -349,10 +349,10 @@
       }
     },
     created() {
-      if(this.admin_seq && this.admin_seq > 0){
-        adminRead(this.admin_seq).then(response => {
+      if(this.member_id && this.member_id > 0){
+        memberReadApi(this.member_id).then(response => {
           response.data.password = '';
-          this.admin = response.data;
+          this.member = response.data;
           this.loading = false;
         }).catch(error => {
           this.$swal({ text: error, icon: 'error' });

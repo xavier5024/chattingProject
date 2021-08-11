@@ -103,6 +103,13 @@ function memberDeleteApi(){
   return axios.post(`${config.baseUrl}/memberList`);
 }
 
+//회원 정보
+function memberReadApi(member_id){
+  const params = new URLSearchParams();
+  params.append('member_id', member_id);
+  return axios.post(`${config.baseUrl}/memberRead`, params);
+}
+
 export {
   sampleApi,
   userLoginApi,
@@ -116,5 +123,6 @@ export {
   memberListApi,
   memberRegisterApi,
   memberUpdateApi,
-  memberDeleteApi
+  memberDeleteApi,
+  memberReadApi
 };

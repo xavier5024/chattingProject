@@ -62,7 +62,12 @@ const routes = [
               path: '/member/memberRegister',
               name: 'memberRegister',
               component: MemberRegisterView
-            }     
+            },
+            {
+              path: '/member/memberModify/:member_id',
+              name: 'memberModify',
+              component: MemberRegisterView
+            }   
         ]
   },
   {
