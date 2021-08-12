@@ -24,60 +24,126 @@ class MemberController extends BaseController
     $member_id = $request->get("member_id");
     return DB::table('users')->where('id', $member_id)->first();
    }
-
    public function memberRegister(Request $request){
-  {
-      $result = array();
-      $data = json_decode($request->get("data"), true);
-      if (count($data)) {
-          foreach ($data as $key => $value) {
-              $request->request->set($key, $value);
-          }
-          request()->request->remove('data');
-      }
+    $result = array();
+    $data = json_decode($request->get("data"), true);
+    if (count($data)) {
+        foreach ($data as $key => $value) {
+            $request->request->set($key, $value);
+        }
+        request()->request->remove('data');
+    }
 
-      $validator = Validator::make($request->all(), [
-          'id'    => 'required|string|max:100|unique:users,user_id',
-          'name'  => 'required|string|max:100',
-          'email' => 'required|email:rfc,dns|max:50|unique:users',
-          'tel'   => 'required|string|max:13|unique:users',
-          'password' => 'required|string|min:8|max:255|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[@!$#%]).*$/',
-          'password_confirmation' => 'string|min:8|max:255|same:password',
-          'profile_img' => 'image|max:4048'
-      ]);
-      
-      if($validator->fails()) {         
-          return array(
-              'result' => false,
-              'message' => implode("<br>", Arr::flatten($validator->messages()->toArray()))
-          );
-      }
+    $validator = Validator::make($request->all(), [
+        'id'    => 'required|string|max:100|unique:users,user_id',
+        'name'  => 'required|string|max:100',
+        'email' => 'required|email:rfc,dns|max:50|unique:users',
+        'tel'   => 'required|string|max:13|unique:users',
+        'password' => 'required|string|min:8|max:255|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[@!$#%]).*$/',
+        'password_confirmation' => 'string|min:8|max:255|same:password',
+        'profile_img' => 'image|max:4048'
+    ]);
+    
+    if($validator->fails()) {         
+        return array(
+            'result' => false,
+            'message' => implode("<br>", Arr::flatten($validator->messages()->toArray()))
+        );
+    }
 
-      $insertdata = array('user_id' => $data["id"], 'name'=>$data["name"], 'password' => Hash::make($data["password"]), 'email' => $data["email"], 'tel' => $data["tel"]);
+    $insertdata = array('user_id' => $data["id"], 'name'=>$data["name"], 'password' => Hash::make($data["password"]), 'email' => $data["email"], 'tel' => $data["tel"]);
 
-      if (request()->hasFile('profile_img') && request()->profile_img->isValid()) {
-          $logical_name = request()->file('profile_img')->getClientOriginalName();
-          $ext = substr($logical_name, strrpos($logical_name, "."));
-          $physical_name = round(microtime(true)).$ext;
-          $filepath = public_path("data");
-          $path = "/".date("Y")."/".date("md");
-          if (!is_dir(public_path("data")."/".date("Y"))) {
-              mkdir(public_path("data")."/".date("Y"));
-          }
-          if (!is_dir(public_path("data")."/".$path)) {
-              mkdir(public_path("data")."/". $path);
-          }
-          $file_result = request()->file('profile_img')->move($filepath.$path,$physical_name);
-          if ($file_result) {
-              $insertdata["profile_src"] = "/data".$path."/".$physical_name;
-          }
-      }
+    if (request()->hasFile('profile_img') && request()->profile_img->isValid()) {
+        $logical_name = request()->file('profile_img')->getClientOriginalName();
+        $ext = substr($logical_name, strrpos($logical_name, "."));
+        $physical_name = round(microtime(true)).$ext;
+        $filepath = public_path("data");
+        $path = "/".date("Y")."/".date("md");
+        if (!is_dir(public_path("data")."/".date("Y"))) {
+            mkdir(public_path("data")."/".date("Y"));
+        }
+        if (!is_dir(public_path("data")."/".$path)) {
+            mkdir(public_path("data")."/". $path);
+        }
+        $file_result = request()->file('profile_img')->move($filepath.$path,$physical_name);
+        if ($file_result) {
+            $insertdata["profile_src"] = "/data".$path."/".$physical_name;
+        }
+    }
 
-      $result["message"] = "생성이 완료되었습니다.";
-      $result['result'] = true;
+    $result["message"] = "생성이 완료되었습니다.";
+    $result['result'] = true;
 
-      return $result;
+    return $result;
+   }
 
-  }
+    public function memberUpdate(Request $request){
+        $result = array();
+        $data = json_decode($request->get("data"), true);
+        if (count($data)) {
+            foreach ($data as $key => $value) {
+                $request->request->set($key, $value);
+            }
+            request()->request->remove('data');
+        }
+        $admindata = $request->input('admin');
+        $admin_seq = $request->input('admin_seq');
+        $file_delete_chk = $request->input('file_deleted');
+        $member = json_decode($data, true);
+        $file_seq = 0;
+
+        if (isset($_FILES["profile_img"])) {
+            $profile_img = $_FILES["profile_img"];
+            if ($profile_img) {
+                $logical_name = $_FILES['profile_img']['name'];
+                $ext = substr($logical_name, strrpos($logical_name, "."));
+                $physical_name = round(microtime(true)).$ext;
+                $filepath = public_path("data");
+                $path = "/".date("Y")."/".date("md");
+                if (!is_dir(public_path("data")."/".date("Y"))) {
+                    mkdir(public_path("data")."/".date("Y"));
+                }
+                if (!is_dir(public_path("data")."/".$path)) {
+                    mkdir(public_path("data")."/". $path);
+                }
+                $file_result = move_uploaded_file($_FILES['profile_img']['tmp_name'], $filepath.$path."/".$physical_name);
+                if ($file_result == "1") {
+                    $file_seq =  DB::table('sd_file')->insertGetId(
+                        ['logical_name' => $logical_name, 'physical_name' => $physical_name, 'path' => "/data".$path],
+                        "file_seq"
+                    );
+                }
+            }
+        }
+
+        $before = DB::table('sd_admin')->where('admin_seq', $admin_seq)->first();
+
+        $admin["tel"] = format_phone($admin["tel"]);
+
+        $updatedata = array('id' => $admin["id"], 'name'=>$admin["name"], 'email' => $admin["email"], 'tel' => $admin["tel"], 'admin_grade_seq'=>$admin["admin_grade_seq"], 'company_seq'=>$admin["company_seq"]);
+
+        if (isset($admin["password"])) {
+            $updatedata["password"] = Hash::make($admin["password"]);
+        }
+
+        if ($file_seq > 0) {
+            $updatedata["file_seq"] = $file_seq;
+            DB::table('sd_file')->where("file_seq", $before->file_seq)->update(array("use_yn"=>"N"));
+        }
+
+        if ($file_delete_chk) {
+            $updatedata["file_seq"] = 0;
+            DB::table('sd_file')->where("file_seq", $before->file_seq)->update(array("use_yn"=>"N"));
+        }
+
+        DB::table('sd_admin')
+            ->where('admin_seq', $admin_seq)
+            ->update($updatedata);
+
+        $result["result"] = true;
+        $result["message"] = "관리자가 수정되었습니다.";
+
+        return $result;
+    }
 
 }

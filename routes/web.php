@@ -43,6 +43,8 @@ Route::middleware("auth")->prefix("data")->group(function(){
     Route::post('/privateRead', [ChatController::class, 'privateRead']);
     Route::post('/memberList', [MemberController::class, 'memberList']);
     Route::post('/memberRead', [MemberController::class, 'memberRead']);
+    Route::post('/memberRegister', [MemberController::class, 'memberRegister']);
+    Route::post('/memberUpdate', [MemberController::class, 'memberUpdate']);
 });
 
 Route::get('/{any?}', function () {

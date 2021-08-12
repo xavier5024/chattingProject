@@ -89,13 +89,28 @@ function memberListApi(){
 }
 
 //회원 등록
-function memberRegisterApi(){
-  return axios.post(`${config.baseUrl}/memberList`);
-}
-
-//회원 수정
-function memberUpdateApi(){
-  return axios.post(`${config.baseUrl}/memberList`);
+function memberRegisterApi(member, profile_img, member_id){
+  const params = new FormData();
+  if(profile_img == "file_deleted"){
+    params.append('file_deleted', true);
+  }else if(profile_img){
+    params.append('profile_img', profile_img);
+  }
+  params.append('data', JSON.stringify(member));
+  if(member_id && member_id > 0){
+    params.append('member_id', member_id);
+    return axios.post(`${config.baseUrl}/memberUpdate`, params, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  }else{
+    return axios.post(`${config.baseUrl}/memberRegister`, params, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  }
 }
 
 //회원 삭제
@@ -122,7 +137,6 @@ export {
   privateRead,
   memberListApi,
   memberRegisterApi,
-  memberUpdateApi,
   memberDeleteApi,
   memberReadApi
 };

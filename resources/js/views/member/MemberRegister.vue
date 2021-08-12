@@ -1,7 +1,7 @@
 <template>
   <div>
     <CCard class="member_info">
-      <CCardHeader v-text="(member_id) ? '관리자 수정하기' : '관리자 추가하기'">
+      <CCardHeader tag="header" style="font-size:20px;" v-text="(member_id) ? '관리자 수정하기' : '관리자 추가하기'">
       </CCardHeader>
       <form id="member_form">
         <CCardBody>
@@ -110,14 +110,11 @@
           <CCol :md="{size:'2'}">
             <CButton block color="secondary" @click="$router.replace({ name: 'memberList'})">목록보기</CButton>
           </CCol>
-          <CCol v-if="member_id" :md="{size:'2', offset:4}">
+          <CCol v-if="member_id" :md="{size:'2', offset:6}">
             <CButton block color="danger" @click="member_delete">삭제하기</CButton>
           </CCol>
-          <CCol :md="(!member_id) ?{size:'2', offset:6} :{size:'2'}">
-            <CButton block color="info" @click="resister" v-text="(member_id) ? '수정하기' : '생성하기'"></CButton>
-          </CCol>
-          <CCol :md="{size:'2'}">
-            <CButton block color="secondary" @click="$router.back()">취소하기</CButton>
+          <CCol :md="(!member_id) ?{size:'2', offset:8} :{size:'2'}">
+            <CButton block color="info" @click="send_form" v-text="(member_id) ? '수정하기' : '생성하기'"></CButton>
           </CCol>
         </CRow>
       </CCardFooter>
@@ -133,10 +130,10 @@
 </template>
 
 <script>
-  import {memberRegisterApi, memberReadApi, memberUpdateApi, memberDeleteApi} from '../../api';
+  import {memberRegisterApi, memberReadApi, memberDeleteApi} from '../../api';
 
   export default {
-    name: "MemberResisterView",
+    name: "MemberRegisterView",
     data() {
       return {
         member: {
@@ -154,7 +151,7 @@
       }
     },
     methods:{
-      async resister(event){ 
+      async send_form(event){ 
         let confirm_message = "";
         let confirm_btn = "";
 
