@@ -12,7 +12,7 @@
                   placeholder="아이디를 입력해주세요"
                   size="lg"
                   name="id"
-                  v-model="member.id"
+                  v-model="member.user_id"
                   :disabled="(member_id > 0) ? true : false "
                   required
               />
@@ -167,7 +167,7 @@
 
         if(!confirm)return;
 
-        if(!this.validateId(this.member.id)){  //아이디 체크
+        if(!this.validateId(this.member.user_id)){  //아이디 체크
           return;
         }
 
@@ -184,7 +184,7 @@
             const resultData = response.data;
             let self = this;
             if(resultData.result) {
-              this.$swal({ text: resultData.message, icon: 'info' }).then(function (alert) {
+              this.$swal({ html: resultData.message, icon: 'info' }).then(function (alert) {
                 self.$router.replace({
                   name: 'memberList'
                 });
@@ -193,12 +193,12 @@
                 }
               });
             } else {
-              this.$swal({ text: resultData.message, icon: 'error' });
+              this.$swal({ html: resultData.message, icon: 'error' });
             }
           })
           .catch(error => {
-            this.$swal({ text: error, icon: 'error' });
-          });
+            this.$swal({ html: error, icon: 'error' });
+          }); 
         }
         if(!this.member.password)this.member.password = '';
       },
