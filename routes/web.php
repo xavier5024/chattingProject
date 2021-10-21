@@ -45,6 +45,9 @@ Route::middleware("auth")->prefix("data")->group(function(){
     Route::post('/memberRead', [MemberController::class, 'memberRead']);
     Route::post('/memberRegister', [MemberController::class, 'memberRegister']);
     Route::post('/memberUpdate', [MemberController::class, 'memberUpdate']);
+    Route::post('/memberFreeBoardListApi', [MemberController::class, 'freeBoardList']);
+    Route::post('/memberFreeBoardViewApi', [MemberController::class, 'freeBoardView']);
+    Route::post('/memberFreeBoardWriteApi', [MemberController::class, 'freeBoardWrite']);
 });
 
 Route::get('/{any?}', function () {

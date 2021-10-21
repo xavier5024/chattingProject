@@ -125,6 +125,24 @@ function memberReadApi(member_id){
   return axios.post(`${config.baseUrl}/memberRead`, params);
 }
 
+//게시판 글 리스트
+function memberFreeBoardListApi(){
+  return axios.post(`${config.baseUrl}/memberFreeBoardListApi`);
+}
+//게시판 글 정보
+function memberFreeBoardViewApi(board_id){
+  const params = new URLSearchParams();
+  params.append('board_id', board_id);  
+  return axios.post(`${config.baseUrl}/memberFreeBoardViewApi`, params);
+}
+//게시판 글 등록
+function memberFreeBoardWriteApi(data){
+  let form = new FormData();
+  form.append('data', JSON.stringify(data));
+  return axios.post(`${config.baseUrl}/memberFreeBoardWriteApi`, form);
+}
+
+
 export {
   sampleApi,
   userLoginApi,
@@ -138,5 +156,8 @@ export {
   memberListApi,
   memberRegisterApi,
   memberDeleteApi,
-  memberReadApi
+  memberReadApi,
+  memberFreeBoardListApi,
+  memberFreeBoardViewApi,
+  memberFreeBoardWriteApi
 };

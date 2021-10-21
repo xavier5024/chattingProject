@@ -24,7 +24,12 @@ export default [
         to: '/member/memberList',
         icon: 'cil-people'
      },
-
+     {
+      _name: 'CSidebarNavItem',
+      name: '게시판',
+      to: '/member/freeBoard',
+      icon: 'cil-list'
+    },
       // {
       // _name: 'CSidebarNavItem',
       //   name: '테스트',

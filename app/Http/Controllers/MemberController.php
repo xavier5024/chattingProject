@@ -139,4 +139,40 @@ class MemberController extends BaseController
         return $result;
     }
 
+    public function freeBoardList(Request $request){
+        return DB::table('member_free_board AS mfb')->select('mfb.id', 'iscomment', 'parent_id', 'subject', 'contents', 'users.id AS user_id', 'users.name', 'users.profile_src')
+        ->selectRaw('DATE_FORMAT(in_dt, "%Y-%m-%d") AS in_dt')
+        ->join("users","users.id", "mfb.user_id")
+        ->get();
+    }
+
+    public function freeBoardView(Request $request){
+        $board_id = $request->get("board_id");
+        return DB::table('member_free_board AS mfb')->select('mfb.id', 'iscomment', 'parent_id', 'subject', 'contents', 'users.id AS user_id', 'users.name', 'users.profile_src')
+        ->selectRaw('DATE_FORMAT(in_dt, "%Y-%m-%d") AS in_dt')
+        ->join("users","users.id", "mfb.user_id")
+        ->where("mfb.id", $board_id)
+        ->first();  
+    }
+
+    public function freeBoardWrite(Request $request){
+        $result = array();
+        $data = json_decode($request->get("data"),true);
+        if($data["id"]){
+            DB::table('member_free_board AS mfb')->where("id", $data["id"])->update(array("iscomment"=>$data["iscomment"], "subject"=>$data["subject"], "contents"=>$data["contents"]));
+            $result["result"] = true;
+            $result["id"] = $data["id"];
+            $result["message"] = "수정이 완료되었습니다";
+        }else{
+            $user = Auth::user();
+            DB::table('member_free_board')->insert(array("iscomment"=>$data["iscomment"], "subject"=>$data["subject"], "contents"=>$data["contents"], "user_id"=>$user->id));
+            $result["result"] = true;
+            $result["id"] = $data["id"];
+            $result["message"] = "등록이 완료되었습니다";
+        }
+        
+
+        return $result;
+    }
+
 }

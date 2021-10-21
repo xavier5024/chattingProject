@@ -9,6 +9,11 @@ import MemberRegisterView from '../views/member/MemberRegister';
 
 import memberContainer from '../components/member/Container';
 
+//memberBoard
+import MemberFreeBoardListView from '../views/member/freeboard/FreeBoardList';
+import MemberFreeBoardViewView from '../views/member/freeboard/FreeBoardView';
+import MemberFreeBoardWriteView from  '../views/member/freeboard/FreeBoardWrite';
+
 // Admin
 import LoginView from '../views/Login';
 import memberJoinView from '../views/Join';
@@ -67,7 +72,27 @@ const routes = [
               path: '/member/memberModify/:member_id',
               name: 'memberModify',
               component: MemberRegisterView
-            }   
+            },
+            {
+              path: '/member/freeBoard',
+              name: 'memberFreeBoardList',
+              component: MemberFreeBoardListView
+            },
+            {
+              path: '/member/freeBoard/view/:board_id',
+              name: 'memberFreeBoardView',
+              component: MemberFreeBoardViewView
+            },
+            {
+              path: '/member/freeBoard/write/:board_id',
+              name: 'memberFreeBoardModify',
+              component: MemberFreeBoardWriteView
+            },
+            {
+              path: '/member/freeBoard/write',
+              name: 'memberFreeBoardWrite',
+              component: MemberFreeBoardWriteView
+            }
         ]
   },
   {
@@ -75,7 +100,7 @@ const routes = [
     name: 'login',
     component: LoginView
   },
-  {
+  { 
     path: '/join',
     name: 'memberJoin',
     component: memberJoinView

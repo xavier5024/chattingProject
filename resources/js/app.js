@@ -13,6 +13,7 @@ import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 import * as VueMenu from '@hscmap/vue-menu'
 import '@progress/kendo-ui'
 import '@progress/kendo-theme-default/dist/all.css'
+import CkEditor from 'ckeditor4-vue'
 
 import { Chat, ChatInstaller } from '@progress/kendo-chat-vue-wrapper'
 
@@ -49,7 +50,9 @@ Vue.use(VueMeta);
 Vue.use(VueSweetalert2);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-Vue.use(VueMenu)
+Vue.use(VueMenu);
+Vue.use(CkEditor);
+
 
 new Vue({
   el: '#app',
