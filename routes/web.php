@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\DashboardController;
 
 use App\Http\Controllers\TestController;
 /*
@@ -20,7 +21,7 @@ use App\Http\Controllers\TestController;
 |
 */
 
-Route::get('test1', [TestController::class,'test1']);
+Route::get('test1', [DashboardController::class,'dashboardList']);
 Route::get('test2', [TestController::class,'test2']);
 Route::get('test3', [TestController::class,'test3']);
 Route::get('test4', [TestController::class,'test4']);
@@ -36,6 +37,7 @@ Route::match(array('GET', 'POST'), 'data/logout', [AuthController::class,'logout
 Route::post('data/join', [AuthController::class,'join']);
 
 Route::middleware("auth")->prefix("data")->group(function(){
+    Route::post('/dashboardList', [DashboardController::class, 'dashboardList']);
     Route::post('/commonChatting', [ChatController::class, 'commonChatting']);
     Route::post('/commonChattingLog', [ChatController::class, 'commonChattingLog']);
     Route::post('/privateChatting', [ChatController::class, 'privateChatting']);

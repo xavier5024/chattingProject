@@ -41,6 +41,10 @@ function memberJoinApi(data, profile_img){
   return axios.post(`${config.baseUrl}/join`, params, {headers: {'Content-Type': 'multipart/form-data'}});
 }
 
+function dashboardListApi(){
+  return axios.post(`${config.baseUrl}/dashboardList`);
+}
+
 // 로그아웃
 function userLogoutApi () {
   return axios.get(`${config.baseUrl}/logout`);
@@ -145,6 +149,7 @@ function memberFreeBoardWriteApi(data){
 
 export {
   sampleApi,
+  dashboardListApi,
   userLoginApi,
   userLogoutApi,
   commonChatting,

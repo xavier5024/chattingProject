@@ -19,7 +19,7 @@ class ChatController extends Controller
 {
     public function commonChattingLog(Request $request)
     {   
-        $common_chat = DB::table('common_chats AS cc')->select("cc.id", "cc.content", "cc.regDate", "cc.type", "cc.file", "users.name", "users.profile_src")->join("users","cc.id", "users.id")->get();
+        $common_chat = DB::table('common_chats AS cc')->select("cc.id", "cc.content", "cc.regDate", "cc.type", "cc.file", "users.name", "users.profile_src")->join("users","cc.id", "users.id")->orderBy("cc.regDate", "asc")->get();
         return $common_chat;
     }
     public function privateChattingLog(Request $request)
